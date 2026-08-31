@@ -134,25 +134,6 @@ No existe autenticación ni servidor, por lo que los datos no se envían a ning�
 
 La aplicación está pensada inicialmente como una herramienta personal de control de gastos.
 
-## 🔮 Próximas mejoras
-
-Algunas funcionalidades que podrían incorporarse posteriormente:
-
-* [ ] Categorías de gastos.
-* [ ] Filtros por rango de fechas.
-* [ ] Presupuesto mensual.
-* [ ] Comparación entre meses.
-* [ ] Gráficos de gastos.
-* [ ] Exportación a CSV.
-* [ ] Exportación a Excel.
-* [ ] Importación de gastos.
-* [ ] Gastos recurrentes.
-* [ ] Resumen mensual.
-* [ ] Instalación como PWA.
-* [ ] Backend y base de datos.
-* [ ] Sincronización entre dispositivos.
-* [ ] Autenticación de usuarios.
-
 ## 🙏 Créditos
 
 Diseño y recursos utilizados en el proyecto:
