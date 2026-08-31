@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="./assets/img/wallet.svg">
+
+    <title>Expense-o-meter</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'media'
+        }
+    </script>
+</head>
+
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100 min-h-screen">
+
+    <div class="max-w-5xl mx-auto px-4 py-8">
+
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold">
+                Trazabilidad de Gastos
+            </h1>
+
+            <p class="text-gray-600 dark:text-gray-400 mt-1">
+                Registra y controla tus gastos personales.
+            </p>
+        </header>
+
+
+        <!-- Formulario -->
+        <section class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 mb-8">
+
+            <h2 class="text-xl font-semibold mb-5">
+                Registrar gasto
+            </h2>
+
+            <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                <!-- Fecha -->
+                <div>
+                    <label for="date" class="block text-sm font-medium mb-2">
+                        Fecha
+                    </label>
+
+                    <input type="date" id="date" required class="w-full rounded-lg border border-gray-300
+                               bg-white px-3 py-2
+                               focus:outline-none focus:ring-2 focus:ring-blue-500
+                               dark:border-gray-700 dark:bg-gray-800">
+                </div>
+
+
+                <!-- Gasto -->
+                <div>
+                    <label for="amount" class="block text-sm font-medium mb-2">
+                        Gasto
+                    </label>
+
+                    <input type="number" id="amount" min="0" step="0.01" placeholder="0" required class="w-full rounded-lg border border-gray-300
+                               bg-white px-3 py-2
+                               focus:outline-none focus:ring-2 focus:ring-blue-500
+                               dark:border-gray-700 dark:bg-gray-800">
+                </div>
+
+
+                <!-- Observación -->
+                <div>
+                    <label for="observation" class="block text-sm font-medium mb-2">
+                        Observación
+                    </label>
+
+                    <input type="text" id="observation" placeholder="Ej: Almuerzo" required class="w-full rounded-lg border border-gray-300
+                               bg-white px-3 py-2
+                               focus:outline-none focus:ring-2 focus:ring-blue-500
+                               dark:border-gray-700 dark:bg-gray-800">
+                </div>
+
+
+                <!-- Botón -->
+                <div class="md:col-span-3 flex justify-end">
+
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700
+                               text-white font-medium
+                               px-5 py-2.5 rounded-lg
+                               transition">
+                        + Registrar gasto
+                    </button>
+
+                </div>
+
+            </form>
+        </section>
+
+
+        <!-- Resumen -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+
+            <!-- Total -->
+            <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
+
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Total gastado este mes
+                </p>
+
+                <p id="totalAmount" class="text-3xl font-bold mt-2">
+                    $0
+                </p>
+
+            </div>
+
+
+            <!-- Cantidad -->
+            <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
+
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Cantidad de gastos
+                </p>
+
+                <p id="expenseCount" class="text-3xl font-bold mt-2">
+                    0
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- Tabla -->
+        <section class="bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden">
+
+            <div class="p-6 border-b border-gray-200 dark:border-gray-800">
+
+                <h2 class="text-xl font-semibold">
+                    Historial
+                </h2>
+
+            </div>
+
+
+            <div class="overflow-x-auto">
+
+                <table class="w-full text-sm">
+
+                    <thead class="bg-gray-50 dark:bg-gray-800">
+
+                        <tr>
+                            <th class="text-left px-6 py-3">
+                                Fecha
+                            </th>
+
+                            <th class="text-left px-6 py-3">
+                                Gasto
+                            </th>
+
+                            <th class="text-left px-6 py-3">
+                                Observación
+                            </th>
+
+                            <th class="text-right px-6 py-3">
+                                Acción
+                            </th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="expenseTable">
+
+                        <!-- Los gastos aparecerán aquí -->
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- Mensaje cuando no hay gastos -->
+            <div id="emptyMessage" class="text-center py-10 text-gray-500 dark:text-gray-400">
+                No hay gastos registrados.
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <footer x-data="{ showCredits: false }" class="mt-12 border-t border-gray-200 dark:border-gray-800">
+        <div class="max-w-5xl mx-auto px-4 py-6">
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+
+                <!-- Copyright -->
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    © 2026 Sebastián Joya
+                </p>
+
+                <!-- Agradecimientos -->
+                <button type="button" @click="showCredits = true" class="text-sm text-gray-500 hover:text-gray-700
+                       dark:text-gray-400 dark:hover:text-gray-200
+                       transition">
+                    Agradecimientos
+                </button>
+
+            </div>
+
+
+            <!-- Modal -->
+            <div x-show="showCredits" x-cloak @keydown.escape.window="showCredits = false"
+                @click.self="showCredits = false" class="fixed inset-0 z-50 flex items-center justify-center
+                   bg-black/50 backdrop-blur-sm px-4">
+
+                <!-- Contenido del modal -->
+                <div x-show="showCredits" x-transition class="relative w-full max-w-md
+                       bg-white dark:bg-gray-900
+                       rounded-2xl shadow-xl
+                       p-6">
+
+                    <!-- Botón cerrar -->
+                    <button type="button" @click="showCredits = false" class="absolute top-4 right-4
+                           text-gray-400 hover:text-gray-600
+                           dark:hover:text-gray-200
+                           text-xl" aria-label="Cerrar">
+                        &times;
+                    </button>
+
+
+                    <!-- Título -->
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                        Agradecimientos
+                    </h2>
+
+
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        Diseño y recursos utilizados en este proyecto.
+                    </p>
+
+
+                    <!-- Crédito -->
+                    <div class="mt-6 text-center">
+
+                        <a href="https://www.magnific.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center
+                               text-sm font-medium
+                               text-blue-600 hover:text-blue-800
+                               dark:text-blue-400 dark:hover:text-blue-300
+                               transition">
+                            designed by juicy_fish - Magnific.com
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </footer>
+
+
+    <script src="./assets/js/functions.js"></script>
+    <script src="./assets/js/app.js"></script>
+
+</body>
+
+</html>
