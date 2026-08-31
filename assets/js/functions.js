@@ -73,9 +73,13 @@ function renderExpenses() {
     }
 
     // Ordenar del más reciente al más antiguo
-    const sortedExpenses = [...currentMonthExpenses].sort(
+    const sortedExpenses = [...expenses].sort(
         (a, b) => new Date(b.date) - new Date(a.date)
     );
+
+    /* const sortedMonthExpenses = [...currentMonthExpenses].sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+    ); */
 
     sortedExpenses.forEach((expense) => {
         const row = document.createElement('tr');
