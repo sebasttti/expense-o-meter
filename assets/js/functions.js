@@ -171,7 +171,6 @@ function updateSummary(currentPeriodExpenses) {
     );
 
     totalAmount.textContent = formatCurrency(total);
-    expenseCount.textContent = monthExpenses.length;
 }
 
 // Formatear moneda
