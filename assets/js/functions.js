@@ -8,6 +8,15 @@ const emptyMessage = document.getElementById('emptyMessage');
 
 const totalAmount = document.getElementById('totalAmount');
 const expenseCount = document.getElementById('expenseCount');
+const periodStartInput = document.getElementById('periodStart');
+const periodEndInput = document.getElementById('periodEnd');
+
+let period = JSON.parse(
+    localStorage.getItem('expensePeriod')
+) || {
+    start: '',
+    end: ''
+};
 
 // Obtener gastos guardados
 let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
@@ -41,6 +50,36 @@ form.addEventListener('submit', function (event) {
   amountInput.focus();
 });
 
+function applyPeriod() {
+
+    const start = periodStartInput.value;
+    const end = periodEndInput.value;
+
+    if (!start || !end) {
+        alert('Debes seleccionar ambas fechas.');
+        return;
+    }
+
+    if (start > end) {
+        alert('La fecha inicial no puede ser mayor que la fecha final.');
+        return;
+    }
+
+    period = {
+        start: start,
+        end: end
+    };
+
+    localStorage.setItem(
+        'expensePeriod',
+        JSON.stringify(period)
+    );
+
+    renderExpenses();
+
+    
+}
+
 // Guardar en localStorage
 function saveExpenses() {
   localStorage.setItem('expenses', JSON.stringify(expenses));
@@ -48,47 +87,40 @@ function saveExpenses() {
 
 // Renderizar gastos
 function renderExpenses() {
+
     expenseTable.innerHTML = '';
 
-    const today = new Date();
+    const currentPeriodExpenses = expenses.filter((expense) => {
 
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
-
-    // Filtrar únicamente los gastos del mes actual
-    const currentMonthExpenses = expenses.filter((expense) => {
-        const expenseDate = new Date(expense.date);
+        if (!period.start || !period.end) {
+            return false;
+        }
 
         return (
-            expenseDate.getMonth() === currentMonth &&
-            expenseDate.getFullYear() === currentYear
+            expense.date >= period.start &&
+            expense.date <= period.end
         );
+
     });
 
-    // Mostrar mensaje si no hay gastos este mes
-    if (currentMonthExpenses.length === 0) {
+    if (currentPeriodExpenses.length === 0) {
         emptyMessage.classList.remove('hidden');
     } else {
         emptyMessage.classList.add('hidden');
     }
 
-    // Ordenar del más reciente al más antiguo
-    const sortedExpenses = [...expenses].sort(
+    const sortedExpenses = [...currentPeriodExpenses].sort(
         (a, b) => new Date(b.date) - new Date(a.date)
     );
 
-    /* const sortedMonthExpenses = [...currentMonthExpenses].sort(
-        (a, b) => new Date(b.date) - new Date(a.date)
-    ); */
-
     sortedExpenses.forEach((expense) => {
+
         const row = document.createElement('tr');
 
         row.className =
             'border-b border-gray-200 dark:border-gray-800';
 
         row.innerHTML = `
-
             <td class="px-6 py-4">
                 ${formatDate(expense.date)}
             </td>
@@ -102,7 +134,6 @@ function renderExpenses() {
             </td>
 
             <td class="px-6 py-4 text-right">
-
                 <button
                     onclick="deleteExpense(${expense.id})"
                     class="text-red-600 hover:text-red-800
@@ -110,14 +141,13 @@ function renderExpenses() {
                 >
                     Eliminar
                 </button>
-
             </td>
         `;
 
         expenseTable.appendChild(row);
     });
 
-    updateSummary(currentMonthExpenses);
+    updateSummary(currentPeriodExpenses);
 }
 
 // Eliminar gasto
@@ -134,8 +164,8 @@ function deleteExpense(id) {
 }
 
 // Actualizar resumen
-function updateSummary(monthExpenses) {
-    const total = monthExpenses.reduce(
+function updateSummary(currentPeriodExpenses) {
+    const total = currentPeriodExpenses.reduce(
         (sum, expense) => sum + expense.amount,
         0
     );
