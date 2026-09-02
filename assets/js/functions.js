@@ -11,44 +11,11 @@ const expenseCount = document.getElementById('expenseCount');
 const periodStartInput = document.getElementById('periodStart');
 const periodEndInput = document.getElementById('periodEnd');
 
-let period = JSON.parse(
-    localStorage.getItem('expensePeriod')
-) || {
-    start: '',
-    end: ''
-};
-
+let period = JSON.parse( localStorage.getItem('expensePeriod') ) || {     start: '',     end: '' };
 // Obtener gastos guardados
 let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
-
 // Fecha actual por defecto
 const today = new Date();
-
-dateInput.value = today.toISOString().split('T')[0];
-
-// Registrar gasto
-form.addEventListener('submit', function (event) {
-  event.preventDefault();
-
-  const expense = {
-    id: Date.now(),
-    date: dateInput.value,
-    amount: parseFloat(amountInput.value),
-    observation: observationInput.value.trim(),
-  };
-
-  expenses.push(expense);
-
-  saveExpenses();
-
-  renderExpenses();
-
-  // Limpiar formulario
-  amountInput.value = '';
-  observationInput.value = '';
-
-  amountInput.focus();
-});
 
 function applyPeriod() {
 
