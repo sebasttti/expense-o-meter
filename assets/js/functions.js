@@ -11,44 +11,57 @@ const expenseCount = document.getElementById('expenseCount');
 const periodStartInput = document.getElementById('periodStart');
 const periodEndInput = document.getElementById('periodEnd');
 
-let period = JSON.parse( localStorage.getItem('expensePeriod') ) || {     start: '',     end: '' };
+let period = JSON.parse(localStorage.getItem('expensePeriod')) || { start: '', end: '' };
 // Obtener gastos guardados
 let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
 // Fecha actual por defecto
 const today = new Date();
 
-function registerExpense(event){
+function registerExpense(event) {
+  event.preventDefault();
 
+  const expense = {
+    id: Date.now(),
+    date: dateInput.value,
+    amount: parseFloat(amountInput.value),
+    observation: observationInput.value.trim(),
+  };
+
+  expenses.push(expense);
+
+  saveExpenses();
+
+  renderExpenses();
+
+  // Limpiar formulario
+  amountInput.value = '';
+  observationInput.value = '';
+
+  amountInput.focus();
 }
 
 function applyPeriod() {
+  const start = periodStartInput.value;
+  const end = periodEndInput.value;
 
-    const start = periodStartInput.value;
-    const end = periodEndInput.value;
+  if (!start || !end) {
+    alert('Debes seleccionar ambas fechas.');
+    return;
+  }
 
-    if (!start || !end) {
-        alert('Debes seleccionar ambas fechas.');
-        return;
-    }
+  if (start > end) {
+    alert('La fecha inicial no puede ser mayor que la fecha final.');
+    return;
+  }
 
-    if (start > end) {
-        alert('La fecha inicial no puede ser mayor que la fecha final.');
-        return;
-    }
+  period = {
+    start: start,
+    end: end,
+  };
 
-    period = {
-        start: start,
-        end: end
-    };
+  localStorage.setItem('expensePeriod', JSON.stringify(period));
 
-    localStorage.setItem(
-        'expensePeriod',
-        JSON.stringify(period)
-    );
-
-    renderExpenses();
-
-    
+  renderExpenses();
 }
 
 // Guardar en localStorage
@@ -58,40 +71,30 @@ function saveExpenses() {
 
 // Renderizar gastos
 function renderExpenses() {
+  expenseTable.innerHTML = '';
 
-    expenseTable.innerHTML = '';
-
-    const currentPeriodExpenses = expenses.filter((expense) => {
-
-        if (!period.start || !period.end) {
-            return false;
-        }
-
-        return (
-            expense.date >= period.start &&
-            expense.date <= period.end
-        );
-
-    });
-
-    if (currentPeriodExpenses.length === 0) {
-        emptyMessage.classList.remove('hidden');
-    } else {
-        emptyMessage.classList.add('hidden');
+  const currentPeriodExpenses = expenses.filter((expense) => {
+    if (!period.start || !period.end) {
+      return false;
     }
 
-    const sortedExpenses = [...currentPeriodExpenses].sort(
-        (a, b) => new Date(b.date) - new Date(a.date)
-    );
+    return expense.date >= period.start && expense.date <= period.end;
+  });
 
-    sortedExpenses.forEach((expense) => {
+  if (currentPeriodExpenses.length === 0) {
+    emptyMessage.classList.remove('hidden');
+  } else {
+    emptyMessage.classList.add('hidden');
+  }
 
-        const row = document.createElement('tr');
+  const sortedExpenses = [...currentPeriodExpenses].sort((a, b) => b.id - a.id);
 
-        row.className =
-            'border-b border-gray-200 dark:border-gray-800';
+  sortedExpenses.forEach((expense) => {
+    const row = document.createElement('tr');
 
-        row.innerHTML = `
+    row.className = 'border-b border-gray-200 dark:border-gray-800';
+
+    row.innerHTML = `
             <td class="px-6 py-4">
                 ${formatDate(expense.date)}
             </td>
@@ -115,10 +118,10 @@ function renderExpenses() {
             </td>
         `;
 
-        expenseTable.appendChild(row);
-    });
+    expenseTable.appendChild(row);
+  });
 
-    updateSummary(currentPeriodExpenses);
+  updateSummary(currentPeriodExpenses);
 }
 
 // Eliminar gasto
@@ -136,12 +139,9 @@ function deleteExpense(id) {
 
 // Actualizar resumen
 function updateSummary(currentPeriodExpenses) {
-    const total = currentPeriodExpenses.reduce(
-        (sum, expense) => sum + expense.amount,
-        0
-    );
+  const total = currentPeriodExpenses.reduce((sum, expense) => sum + expense.amount, 0);
 
-    totalAmount.textContent = formatCurrency(total);
+  totalAmount.textContent = formatCurrency(total);
 }
 
 // Formatear moneda
