@@ -12,27 +12,3 @@ document.addEventListener('DOMContentLoaded', () => {
     
     renderExpenses();
 });
-
-// Registrar gasto
-form.addEventListener('submit', function (event) {
-  event.preventDefault();
-
-  const expense = {
-    id: Date.now(),
-    date: dateInput.value,
-    amount: parseFloat(amountInput.value),
-    observation: observationInput.value.trim(),
-  };
-
-  expenses.push(expense);
-
-  saveExpenses();
-
-  renderExpenses();
-
-  // Limpiar formulario
-  amountInput.value = '';
-  observationInput.value = '';
-
-  amountInput.focus();
-});

@@ -17,6 +17,10 @@ let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
 // Fecha actual por defecto
 const today = new Date();
 
+function registerExpense(event){
+
+}
+
 function applyPeriod() {
 
     const start = periodStartInput.value;
