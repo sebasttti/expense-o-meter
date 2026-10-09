@@ -1,6 +1,8 @@
 const VERSION = new URL(self.location).searchParams.get('v');
 const APP_VERSION = `expense-o-meter-${VERSION}`;
 
+console.log(APP_VERSION)
+
 const ASSETS = [
     "./",
     "./index.html",
@@ -66,12 +68,6 @@ self.addEventListener("fetch", (event) => {
             (async () => {
                 try {
                     const response = await fetch(event.request);
-
-                    console.log(
-                        event.request.url,
-                        response.bodyUsed,
-                        response.ok,
-                    );
 
                     if (response.ok) {
                         const cache = await caches.open(APP_VERSION);
